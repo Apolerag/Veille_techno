@@ -1,0 +1,60 @@
+[utf-8]
+Systèmes et Logiciels Embarqués (SLE)
+Université de Lyon - Jean-Patrick Gelas <jpgelas@ens-lyon.fr>
+
+====================
+
+   TP2 - Elagage
+
+====================
+
+o Travail à rendre : Faire une démo à votre enseignant qui relèvera la taille
+de votre nouvelle image initrd.
+
+L'objectif de ce second exercice est de réduire au maximum un système de
+fichiers, c'est a dire, ne garder que le strict minimum. L'étudiant (ou le binome) qui
+obtiendra le plus petit initrd gagne !
+
+o Ingrédients :
+
+- Récupérez un noyau Linux (Debian) compilé avec le support de l'initrd
+  wget http://perso.ens-lyon.fr/jean-patrick.gelas/edu/sle/vmlinuz-2.6.18-4-686
+
+- Récuperez le fichier initrd-big.img
+  wget http://perso.ens-lyon.fr/jean-patrick.gelas/edu/sle/initrd-BIG.img
+
+o Premier test :
+
+Sans avoir encore modifié l'initrd testez (avec Qemu) le noyau et l'initrd fraichement recuperés.
+
+ qemu -kernel ./vmlinuz-2.6.18-4-686 -initrd ./initrd-big.img -hda /dev/zero
+
+Vous devriez obtenir une machine (virtuelle) qui boote sur un noyau Linux, puis pose une question en boucle.
+
+o Comment modifier le contenu du fichier initrd ?
+
+  mkdir initrd
+  cd initrd
+  gzip -dc ../initrd-big.img | cpio -id
+
+o Comment reconstruire le fichier initrd ?
+
+  cd initrd
+  find ./ | cpio -H newc -o > ../new-initrd.cpio
+  cd ..
+  gzip -9 new-initrd.cpio
+  mv new-initrd.cpio.gz new-initrd.img
+
+o Comment tester l'initrd modifié ?
+
+  qemu -kernel ./vmlinuz-2.6.18-4-686 -initrd ./new-initrd.img -hda /dev/zero
+
+
+Happy Pruning!
+
+	Jp (5,2 Mo -> 607 Ko ;-)
+
+sources :
+http://wiki.openvz.org/Modifying_initrd_image
+http://www.szabilinux.hu/forditasok/nfs-root/initrd.txt
+
