@@ -1,0 +1,10 @@
+#!/bin/hush
+
+echo "Running, linuxrc !!!"
+echo
+echo "Say something and then press <Enter> :"
+while true ; do
+ read T
+ echo -n "What you mean by '$T'? " 
+done
+
